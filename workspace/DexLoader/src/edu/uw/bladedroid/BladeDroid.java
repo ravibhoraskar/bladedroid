@@ -27,7 +27,7 @@ public final class BladeDroid {
 		// change identifier to something different than appName
 		String appName = getApplicationName(a.getApplicationContext());
 		Log.i(TAG, "calling onCreate for app " + appName + " in activity " + a.getPackageName());
-		IBlade b = getInstance(a).getBladeLoader().getBlade(appName);
+		AbstractBlade b = getInstance(a).getBladeLoader().getBlade(appName);
 		if (b != null) {
 			Log.i(TAG, "found blade, executing onCreate");
 			b.onCreate(a, savedInstanceState);

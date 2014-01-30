@@ -9,7 +9,7 @@ import java.util.Map;
 import dalvik.system.DexClassLoader;
 
 import edu.uw.bladedroid.BladeDroid;
-import edu.uw.bladedroid.IBlade;
+import edu.uw.bladedroid.AbstractBlade;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,12 +31,12 @@ public class BladeLoader {
 	private final File tmpDir;
 	
 	private Context applicationContext;
-	private Map<String, IBlade> blades;
+	private Map<String, AbstractBlade> blades;
 	
 	public BladeLoader(Activity initiator) {
 		applicationContext = initiator.getApplicationContext();
 		tmpDir = getContext().getDir("dex", Context.MODE_PRIVATE);
-		blades = new HashMap<String, IBlade>();
+		blades = new HashMap<String, AbstractBlade>();
 	
 		loadAllBlades();
 	}
@@ -63,11 +63,11 @@ public class BladeLoader {
 			
 			// TODO: improve this to load all that implement IBlade etc.
 			// this is just temporary for testing
-			String className = "edu.uw.bladedroid.TestBlade";
+			String className = "edu.uw.bladedroid.blade.TestBlade";
 			try {
 				Class<?> cls = Class.forName(className, true, classLoader);
 				Log.i(BladeDroid.TAG, "loaded class " + className + " sucessfully!");
-				blades.put(getPlainFilename(f.getName()), (IBlade) cls.newInstance());
+				blades.put(getPlainFilename(f.getName()), (AbstractBlade) cls.newInstance());
 			} catch (Throwable t) {
 	            Log.e(BladeDroid.TAG, "Error while loading class from jar file " + f.getPath(), t);
 	        }
@@ -75,7 +75,7 @@ public class BladeLoader {
 		
 	}
 	
-	public IBlade getBlade(String appName) {
+	public AbstractBlade getBlade(String appName) {
 		return blades.get(appName);
 	}
 	
