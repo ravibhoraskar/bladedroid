@@ -52,8 +52,20 @@ public class BladeLoader {
 		
 //		String jarFiles = TextUtils.join(File.pathSeparator, );
 
+		if(!BASE_PATH.exists() || !BASE_PATH.isDirectory()) {
+			Log.i(BladeDroid.TAG, "No blades found because directory " +BASE_PATH+ " does not exit");
+			return;
+		}
+		
 		Log.i(BladeDroid.TAG, "Analyzing folder " + BASE_PATH);
-		for (File f : BASE_PATH.listFiles(filter)) {
+		File[] jarFiles = BASE_PATH.listFiles(filter);
+		
+		if(jarFiles == null) {
+			Log.e(BladeDroid.TAG, "Faied to load jar files from folder. Probably READ_EXTERNAL_STORAGE permission missing.");
+			return;
+		}
+		
+		for (File f : jarFiles) {
 			Log.i(BladeDroid.TAG, "Loading file " + f.getAbsolutePath());
 			// http://stackoverflow.com/questions/3022454/how-to-load-a-java-class-dynamically-on-android-dalvik
 			// use separate classLoader for every jar file (classes could have same names etc) 
@@ -66,7 +78,7 @@ public class BladeLoader {
 			String className = "edu.uw.bladedroid.blade.TestBlade";
 			try {
 				Class<?> cls = Class.forName(className, true, classLoader);
-				Log.i(BladeDroid.TAG, "loaded class " + className + " sucessfully!");
+				Log.i(BladeDroid.TAG, "loaded class " + className + " sucessfully for " +getPlainFilename(f.getName())+ "!");
 				blades.put(getPlainFilename(f.getName()), (AbstractBlade) cls.newInstance());
 			} catch (Throwable t) {
 	            Log.e(BladeDroid.TAG, "Error while loading class from jar file " + f.getPath(), t);
