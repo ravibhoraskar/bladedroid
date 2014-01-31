@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="instrument" default="genjar" basedir=".">
+  <description>
+  	Instrument Android APKs using SOOT. 
+  </description>
+
+  <property name="src" location="src"/>
+  <property name="libs" location="libs"/>
+  <property name="build" location="classes"/>
+  <property name="jar_name" value="instrument.jar"/>
+
+  <path id="lib_classpath">
+    <fileset dir="${libs}">
+	  <include name="*.jar"/>
+	</fileset>
+  </path>
+
+  <target name="init">
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile the source">
+    <javac srcdir="${src}" destdir="${build}" debug="true" includeantruntime="true">
+	  <classpath refid="lib_classpath" />
+	</javac>
+  </target>
+
+  <target name="genjar" depends="compile" description="generate the jar">
+    <jar destfile="${jar_name}" basedir="${build}">
+	  <zipfileset src="${libs}/soot-trunk.jar"/>
+	  <manifest>
+	    <attribute name="Main-Class" value="edu.uw.bladedroid.instrument.Main"/>
+	  </manifest>
+	</jar>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${build}"/>
+	<delete dir="${jar}"/>
+  </target>
+</project>
