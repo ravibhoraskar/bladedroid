@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<title>BladeDroid Instructions and Documentations</title>
+
+<xmp theme="simplex" style="display:none;">
+# BladeDroid
+
+## User Scripting (Blade Generation)
+
+To convert eclipse-exported jar file to dalvik, which can be loaded.
+
+    <sdk-dir>/build-tools/<version>/dx --dex --output=output.jar input.jar
+
+Put the resulting `.jar` file onto the external storage of your Android device under:
+
+    /<external_storage>/blades/<package_name>/
+
+Where the `<package_name>` is the package name of the application to script for.
+Every `.jar` file found in this directory will be scanned for classes that inherit from
+`AbstractBlade` that are then initiated and executed on every activity event.
+
+## Instrumentation
+
+Compile the instrumentation code using ant. Run it as follows:
+
+    java -jar instrument.jar -apk <some-apk-file> -lib bladedroid.jar -aj <sdk-dir>/platforms/android-<num>/android.jar
+
+Here `bladedroid.jar` contains classes for `BladeDroid.java`, `BladeLoader.java` etc
+
+
+
+</xmp>
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>
