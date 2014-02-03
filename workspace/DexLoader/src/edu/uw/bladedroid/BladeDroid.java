@@ -3,7 +3,6 @@ package edu.uw.bladedroid;
 import java.util.Set;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import edu.uw.bladedroid.loader.BladeLoader;
@@ -91,11 +90,6 @@ public final class BladeDroid {
 
     private BladeLoader getBladeLoader() {
         return loader;
-    }
-
-    private static String getApplicationName(Context context) {
-        int stringId = context.getApplicationInfo().labelRes;
-        return context.getString(stringId);
     }
 
     private interface BladeExecutor {
