@@ -1,0 +1,8 @@
+Service Loader
+http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html
+
+http://www.oracle.com/technetwork/articles/javase/extensible-137159.html
+http://stackoverflow.com/questions/10304100/serviceloader-to-find-implementations-of-an-interface
+
+http://stackoverflow.com/questions/18875244/java-build-ant-file-with-external-jar-files
+http://www.ibm.com/developerworks/library/j-5things12/#N10097 (has ant part)
