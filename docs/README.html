@@ -5,6 +5,8 @@
 <xmp theme="simplex" style="display:none;">
 # BladeDroid
 
+_Notice that most of the provided command line examples work only if you have added your `tools` folder in the Android SDK to the path variable of your system. Do this by running `export PATH=$PATH:"<sdk-dir>/tools"` or adding this line to your `~/.bash_profile`._
+
 ## User Scripting (Blade Generation)
 
 To convert eclipse-exported jar file to dalvik, which can be loaded.
@@ -15,17 +17,60 @@ Put the resulting `.jar` file onto the external storage of your Android device u
 
     /<external_storage>/blades/<package_name>/
 
-Where the `<package_name>` is the package name of the application to script for.
+Where the `<package_name>` is the package name of the application to script for. (i.e. the project name which is the name of its `apk`)
 Every `.jar` file found in this directory will be scanned for classes that inherit from
 `AbstractBlade` that are then initiated and executed on every activity event.
 
+
 ## Instrumentation
 
-Compile the instrumentation code using ant. Run it as follows:
+The process of modifing an existing Android application to be user scriptable, is called instrumentation. This section gives an overview of how to do that.
+
+### Compiling apk
+
+Compile the instrumentation code using `ant` (Buildfile is in project directory). Run it as follows:
 
     java -jar instrument.jar -apk <some-apk-file> -lib bladedroid.jar -aj <sdk-dir>/platforms/android-<num>/android.jar
 
 Here `bladedroid.jar` contains classes for `BladeDroid.java`, `BladeLoader.java` etc
+
+### Signing
+
+Use `jarsigner` to sign the new modified `.apk` with your private key. The full details can be found in the [Android docs](http://developer.android.com/tools/publishing/app-signing.html). A short outline is provided here.
+
+#### Retrie a keypair
+
+You can generate a keypair using the `keytool` command line tool. The following example generates a key pair that is valid for `10000` days (i.e. more than 27 years).
+
+    $ keytool -genkey -v -keystore <my-release-key>.keystore -alias <alias_name> -keyalg RSA -keysize 2048 -validity 10000
+
+#### Sign your instrumented application
+
+You can use the provided `jarsigner` tool to sign your instrumented `.apk` file.
+
+    $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore <instrumented_apk> <alias_name>
+
+It is possible, that the signing process fails with an error message like:
+
+    jarsigner: unable to sign jar: java.util.zip.ZipException: invalid entry compressed size (expected 462 but got 464 bytes)
+
+This usually happens if the application is already signed. In this case you have to remove the `META-INF` folder from within the APK before you can sign it again. (unzip it, remove the folder and zip it again) __This should be automated__
+
+
+### Aligning
+
+Use `zipalign` to optimize the final `.apk`:
+
+    $ zipalign -v 4 -f <unaligned-apk> <aligned-apk>
+
+where the `aligned-apk` should have the name it had before you instrumented it which is the project name. The added `-f` flag instructs the tool to overwrite existing files.
+
+### Running new APK on Emulator
+
+First start the emulator (e.g. through eclipse) and then run
+
+    adb install <new-apk-file>
+
 
 
 
