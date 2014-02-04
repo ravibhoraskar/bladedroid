@@ -38,7 +38,7 @@ Here `bladedroid.jar` contains classes for `BladeDroid.java`, `BladeLoader.java`
 
 Use `jarsigner` to sign the new modified `.apk` with your private key. The full details can be found in the [Android docs](http://developer.android.com/tools/publishing/app-signing.html). A short outline is provided here.
 
-#### Retrie a keypair
+#### Retrieve a keypair
 
 You can generate a keypair using the `keytool` command line tool. The following example generates a key pair that is valid for `10000` days (i.e. more than 27 years).
 
@@ -67,12 +67,13 @@ where the `aligned-apk` should have the name it had before you instrumented it w
 
 ### Running new APK on Emulator
 
-First start the emulator (e.g. through eclipse) and then run
+First start the emulator, either through eclipse, or through
+
+    android avd
+
+then run 
 
     adb install <new-apk-file>
-
-
-
 
 </xmp>
 
