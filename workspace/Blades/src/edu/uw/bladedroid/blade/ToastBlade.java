@@ -8,7 +8,7 @@ import edu.uw.bladedroid.AbstractBlade;
 public class ToastBlade extends AbstractBlade {
 	
 	@Override
-	public void onResume(Activity activity, Bundle savedInstanceState) {
+	public void onResume(Activity activity) {
 		Toast.makeText(activity.getApplicationContext(), "Hello World!",
 				   Toast.LENGTH_LONG).show();
 	}

@@ -33,47 +33,47 @@ public final class BladeDroid {
         });
     }
 
-    public static void onStart(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onStart(Activity activity) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
             public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
-                b.onStart(activity, savedInstanceState);
+                b.onStart(activity);
             }
         });
     }
 
-    public static void onResume(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onResume(Activity activity) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
             public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
-                b.onResume(activity, savedInstanceState);
+                b.onResume(activity);
             }
         });
     }
 
-    public static void onPause(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onPause(Activity activity) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
             public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
-                b.onPause(activity, savedInstanceState);
+                b.onPause(activity);
             }
         });
     }
 
-    public static void onStop(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onStop(Activity activity) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
             public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
-                b.onStop(activity, savedInstanceState);
+                b.onStop(activity);
             }
         });
     }
 
-    public static void onDestroy(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onDestroy(Activity activity) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
             public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
-                b.onDestroy(activity, savedInstanceState);
+                b.onDestroy(activity);
             }
         });
     }
@@ -86,6 +86,10 @@ public final class BladeDroid {
                 executor.execute(activity, savedInstanceState, b);
             }
         }
+    }
+
+    private static void executeBlades(Activity activity, BladeExecutor executor) {
+        executeBlades(activity, null, executor);
     }
 
     private BladeLoader getBladeLoader() {
