@@ -5,6 +5,7 @@ import java.util.Set;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import edu.uw.bladedroid.blade.AbstractBlade;
 import edu.uw.bladedroid.loader.BladeLoader;
 
 public final class BladeDroid {
@@ -81,9 +82,11 @@ public final class BladeDroid {
     private static void executeBlades(Activity activity, Bundle savedInstanceState, BladeExecutor executor) {
         Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
         for (AbstractBlade b : blds) {
-            if (b != null) {
+            if (b != null && b.isForActivity(activity.getPackageName())) {
                 Log.i(TAG, "executing blade " + b);
                 executor.execute(activity, savedInstanceState, b);
+            } else {
+                Log.i(TAG, "omitting execution of blade " + b);
             }
         }
     }
