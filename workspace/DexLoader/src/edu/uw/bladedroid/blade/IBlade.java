@@ -1,4 +1,4 @@
-package edu.uw.bladedroid;
+package edu.uw.bladedroid.blade;
 
 import android.app.Activity;
 import android.os.Bundle;

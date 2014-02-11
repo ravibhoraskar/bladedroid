@@ -14,8 +14,8 @@ import android.os.Environment;
 import android.util.Log;
 import dalvik.system.DexClassLoader;
 import dalvik.system.DexFile;
-import edu.uw.bladedroid.AbstractBlade;
 import edu.uw.bladedroid.BladeDroid;
+import edu.uw.bladedroid.blade.AbstractBlade;
 
 /**
  * Loads all Blades from a specified location into memory for later use.
