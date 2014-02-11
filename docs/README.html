@@ -30,7 +30,7 @@ The process of modifing an existing Android application to be user scriptable, i
 
 Compile the instrumentation code using `ant` (Buildfile is in project directory). Run it as follows:
 
-    java -jar instrument.jar -apk <some-apk-file> -lib bladedroid.jar -aj <sdk-dir>/platforms/android-<num>/android.jar
+    java -Xss50m -Xmx1500m -jar instrument.jar -apk <some-apk-file> -lib bladedroid.jar -aj <sdk-dir>/platforms/android-<num>/android.jar
 
 Here `bladedroid.jar` contains classes for `BladeDroid.java`, `BladeLoader.java` etc
 
