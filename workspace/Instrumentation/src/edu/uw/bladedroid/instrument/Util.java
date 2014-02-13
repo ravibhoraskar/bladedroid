@@ -19,6 +19,11 @@ public class Util {
 
     private static final String ActivityClassName = "android.app.Activity";
     public static final String onCreateName = "onCreate";
+    public static final String onStartName = "onStart";
+    public static final String onResumeName = "onResume";
+    public static final String onPauseName = "onPause";
+    public static final String onStopName = "onStop";
+    public static final String onDestroyName = "onDestroy";
 
     private static SootClass activityClass = null;
 
