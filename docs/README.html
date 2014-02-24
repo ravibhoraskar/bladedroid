@@ -48,13 +48,21 @@ You can generate a keypair using the `keytool` command line tool. The following 
 
 You can use the provided `jarsigner` tool to sign your instrumented `.apk` file.
 
-    $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore <instrumented_apk> <alias_name>
+    $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore <my-release-key.keystore> <instrumented_apk> <alias_name>
+
+#### Debug Key
+
+You can also use the standard debug key `debug.keystore` (in `~/.android/`) with alias `android` and password `android`. Consult the [documentation](https://developer.android.com/tools/publishing/app-signing.html#debugmode) for details. The debug key is automatically generated when running the app through eclipse or using `ant debug`. Otherwise you can generate it by running
+
+    keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
+
+#### Possible Errors
 
 It is possible, that the signing process fails with an error message like:
 
     jarsigner: unable to sign jar: java.util.zip.ZipException: invalid entry compressed size (expected 462 but got 464 bytes)
 
-This usually happens if the application is already signed. In this case you have to remove the `META-INF` folder from within the APK before you can sign it again. (unzip it, remove the folder and zip it again) __This should be automated__
+This usually happens if the application is already signed and you try to sign it again with a production key. In this case you have to remove the `META-INF` folder from within the APK before you can sign it again. (unzip it, remove the folder and zip it again) __This should be automated__
 
 
 ### Aligning
