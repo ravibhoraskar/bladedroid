@@ -61,7 +61,7 @@ This usually happens if the application is already signed. In this case you have
 
 Use `zipalign` to optimize the final `.apk`:
 
-    $ zipalign -v 4 -f <unaligned-apk> <aligned-apk>
+    $ zipalign -v -f 4 <unaligned-apk> <aligned-apk>
 
 where the `aligned-apk` should have the name it had before you instrumented it which is the project name. The added `-f` flag instructs the tool to overwrite existing files.
 
