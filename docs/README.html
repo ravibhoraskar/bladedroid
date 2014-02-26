@@ -34,6 +34,13 @@ Compile the instrumentation code using `ant` (Buildfile is in project directory)
 
 Here `bladedroid.jar` contains classes for `BladeDroid.java`, `BladeLoader.java` etc
 
+### Adding Permission
+The current version of the instrumentation does not automatically add the required `READ_EXTERNAL_STORAGE` permission to the `AndroidManifest.xml` file. For this, the following tag has to be added as a child node of the `manifest` tag.
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+This can be done using `apktool d -s <my-apk.apk>` as explained further down.
+
 ### Signing
 
 Use `jarsigner` to sign the new modified `.apk` with your private key. The full details can be found in the [Android docs](http://developer.android.com/tools/publishing/app-signing.html). A short outline is provided here.
@@ -79,9 +86,25 @@ First start the emulator, either through eclipse, or through
 
     android avd
 
-then run 
+then run (`-r` to overwrite existing installations)
 
-    adb install <new-apk-file>
+    adb install -r <new-apk-file.apk>
+
+### Modifying apk
+To alter an `.apk` file manually use the `apktool` as provided by Google [here](https://code.google.com/p/android-apktool/). Possible tasks inlcude:
+
+ - Manual changes to AndroidManifest
+ - Looking for implementation details of apps to write Blades for
+
+To decompile use:
+
+    apktool d <your_apk.apk> [<output_dir>]
+
+To recompile (i.e. _build_):
+
+    apktool b [<app_path>] [<out_file>]
+
+If you just want to change either source code or resources, use the `-s` and `-r` flags repsectively during decompilation. (Will only decompile the wanted parts)
 
 </xmp>
 
