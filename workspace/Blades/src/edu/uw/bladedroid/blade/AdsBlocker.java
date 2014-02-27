@@ -1,6 +1,7 @@
 package edu.uw.bladedroid.blade;
 
-import com.google.ads.AdView;
+//import com.google.ads.AdView;
+//import com.google.android.gms.ads.AdView;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,10 +25,23 @@ public class AdsBlocker extends AbstractBlade {
 		for(int i = 0; i < childCount; i++){
 			View v = viewgroup.getChildAt(i);
 //			Log.wtf("ADSBLOCKER", v.getClass().getName());
-			if(v instanceof AdView){
-				((ViewGroup)v.getParent()).removeView(v);
-				Log.wtf("ADSBLOCKER", "FOUND ADVIEW");
-			}else if(v instanceof ViewGroup){
+			try{
+				if(v instanceof com.google.ads.AdView ){
+					((ViewGroup)v.getParent()).removeView(v);
+					Log.wtf("ADSBLOCKER", "FOUND ADVIEW");
+					continue;
+				}
+			}catch (NoClassDefFoundError e){
+			}
+			try{
+				if(v instanceof com.google.android.gms.ads.AdView ){
+					((ViewGroup)v.getParent()).removeView(v);
+					Log.wtf("ADSBLOCKER", "FOUND ADVIEW");
+					continue;
+				}
+			}catch (NoClassDefFoundError e){
+			}
+			if(v instanceof ViewGroup){
 //				Log.wtf("ADSBLOCKER", "instance of viewgroup");
 				removeAllAdView(v);
 			}
