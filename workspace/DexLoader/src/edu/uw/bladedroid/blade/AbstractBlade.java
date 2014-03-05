@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import edu.uw.bladedroid.BladeDroid;
 
 public abstract class AbstractBlade implements IBlade {
@@ -46,6 +47,11 @@ public abstract class AbstractBlade implements IBlade {
 
     @Override
     public void onDestroy(Activity activity) {
+    }
+
+    @Override
+    public boolean onKeyLongPress(Activity activity, int keyCode, KeyEvent event) {
+        return false;
     }
 
 }

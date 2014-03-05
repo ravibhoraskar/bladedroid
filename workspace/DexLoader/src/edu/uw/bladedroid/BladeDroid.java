@@ -5,6 +5,7 @@ import java.util.Set;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import edu.uw.bladedroid.blade.AbstractBlade;
 import edu.uw.bladedroid.loader.BladeLoader;
 
@@ -77,6 +78,19 @@ public final class BladeDroid {
                 b.onDestroy(activity);
             }
         });
+    }
+
+    public static void onKeyLongPress(Activity activity, int keyCode, KeyEvent event)
+    {
+        Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
+        for (AbstractBlade b : blds) {
+            if (b != null && b.isForActivity(activity.getPackageName())) {
+                Log.i(TAG, "executing blade " + b);
+                b.onKeyLongPress(activity, keyCode, event);
+            } else {
+                Log.i(TAG, "omitting execution of blade " + b);
+            }
+        }
     }
 
     private static void executeBlades(Activity activity, Bundle savedInstanceState, BladeExecutor executor) {

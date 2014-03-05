@@ -2,6 +2,7 @@ package edu.uw.bladedroid.blade;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 public interface IBlade {
     /**
@@ -46,5 +47,15 @@ public interface IBlade {
      * @see Activity#onDestroy
      */
     void onDestroy(Activity activity);
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyLongPress
+     */
+    boolean onKeyLongPress(Activity activity, int keyCode, KeyEvent event);
 
 }

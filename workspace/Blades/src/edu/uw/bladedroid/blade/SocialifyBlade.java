@@ -5,34 +5,20 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 
-public class SocialifyBlade extends AbstractBlade{
-	Activity activity = null;
-	
-	
+public class SocialifyBlade extends AbstractBlade{	
 	@Override
-	public void onCreate(Activity activity, Bundle savedInstanceState) 
-	{
-		this.activity=activity;
-	}
-	
-	
-// TODO: Add this to the AbstractBlade
-//	@Override
-	public boolean onKeyLongPress(int keyCode, KeyEvent event)
+	public boolean onKeyLongPress(Activity activity, int keyCode, KeyEvent event)
 	{
 		if(keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			postStuff();
+			postStuff(activity);
 			return true;
 		}
 		return false;
 	}
 	
-	
-	
-	public void postStuff()
+	public void postStuff(Activity activity)
 	{
 		Intent i = new Intent("android.intent.action.MAIN");
 		i.setComponent(ComponentName.unflattenFromString("com.socialify/.PostActivity"));
@@ -40,7 +26,4 @@ public class SocialifyBlade extends AbstractBlade{
 		i.putExtra("data", "I love "+activity.getApplicationContext().getPackageName());
 		activity.startActivity(i);
 	}
-	
-	
-	
 }
