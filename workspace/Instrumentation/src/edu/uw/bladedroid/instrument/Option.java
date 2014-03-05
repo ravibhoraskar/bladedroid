@@ -16,7 +16,7 @@ public class Option {
     private static String lib = null;
     private static String output_dir = "output";
     private static int bufferNum = -1;
-    private static int output_format = Options.output_format_dex;
+    private static int output_format = Options.output_format_J;
     private static String androidJar = "libs/raviandroid.jar";
 
     public static String getApk() {
