@@ -1,5 +1,7 @@
 package com.socialify;
 
+import javax.security.auth.Destroyable;
+
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -16,12 +18,19 @@ import android.widget.TextView;
 
 public class PostActivity extends Activity {
 	
+	private boolean posting;
+	private String dataToPost;
+
 	@Override
-	protected void onCreate(Bundle data) 
+	protected void onCreate(Bundle bundle) 
 	{
-		super.onCreate(data);
+		super.onCreate(bundle);
+	
 		
-		setContentView(R.layout.activity_main);
+		Bundle data = getIntent().getExtras();
+		dataToPost=data.getString("data");
+		
+		setContentView(R.layout.activity_post);
 		Log.wtf("Socialify","Opening session");
 		// start Facebook Login
 		
@@ -34,10 +43,41 @@ public class PostActivity extends Activity {
 				Log.wtf("Socialify", "Session Changed!");
 				if (s.isOpened()) {
 					Log.wtf("Socialify", "Session is opened");
-					
+					doPost();
 				}
 			}
 		});
+	}
+
+	protected void doPost() {
+		if(!posting)
+		{
+			posting=true;
+			Request request = Request
+					.newStatusUpdateRequest(Session.getActiveSession(), dataToPost, new Request.Callback() {
+						@Override
+						public void onCompleted(Response response) {
+							//response.getError().getCategory().
+							if(response.getError()==null)
+							{
+							Log.wtf("Socialify", "Posted to wall! "+response.toString());
+							finish();
+							}
+							else
+							{
+								showError();
+								posting=false;
+							}
+						}
+					});
+			request.executeAsync();
+		}
+	}
+
+	protected void showError() {
+		TextView tv = (TextView) findViewById(R.id.tv1);
+		tv.setText("Error. Could not post");
+		Log.wtf("Socialify", "Error. Could not post");
 	}
 
 	@Override
