@@ -2,7 +2,6 @@ package edu.uw.bladedroid.instrument;
 
 import soot.Body;
 import soot.Local;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
@@ -28,14 +27,13 @@ public class BladeDroid_Instrument
 
     public static void run()
     {
-        Chain<SootClass> appClassChain = Scene.v().getApplicationClasses();
         SootMethod bladedroid_onCreate = Util.getMethod(bladedroid_onCreate__signature, bladedroid__class);
         SootMethod bladedroid_onStart = Util.getMethod(bladedroid_onStart__signature, bladedroid__class);
         SootMethod bladedroid_onResume = Util.getMethod(bladedroid_onResume__signature, bladedroid__class);
         SootMethod bladedroid_onPause = Util.getMethod(bladedroid_onPause__signature, bladedroid__class);
         SootMethod bladedroid_onStop = Util.getMethod(bladedroid_onStop__signature, bladedroid__class);
         SootMethod bladedroid_onDestroy = Util.getMethod(bladedroid_onDestroy__signature, bladedroid__class);
-        for (SootClass activity : Util.getActivities(appClassChain))
+        for (SootClass activity : Util.getActivities())
         {
             instrumentCallAtEnd(activity, Util.onCreateName, bladedroid_onCreate);
             instrumentCallAtEnd(activity, Util.onStartName, bladedroid_onStart);
@@ -44,6 +42,7 @@ public class BladeDroid_Instrument
             instrumentCallAtEnd(activity, Util.onStopName, bladedroid_onStop);
             instrumentCallAtEnd(activity, Util.onDestroyName, bladedroid_onDestroy);
 
+            // Code after this is unnecessary (for now)
             SootMethod constructor;
             try
             {
@@ -60,6 +59,7 @@ public class BladeDroid_Instrument
             Body body = constructor.retrieveActiveBody();
             Chain<Unit> toInsert = new HashChain<Unit>();
             Local thislocal = Util.findthislocal(body.getUnits());
+
         }
     }
 

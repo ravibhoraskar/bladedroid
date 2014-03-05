@@ -32,8 +32,9 @@ public class Util {
         activityClass = Scene.v().getSootClass(ActivityClassName);
     }
 
-    public static Chain<SootClass> getActivities(Chain<SootClass> appClassChain)
+    public static Chain<SootClass> getActivities()
     {
+        Chain<SootClass> appClassChain = Scene.v().getApplicationClasses();
         Chain<SootClass> activities = new HashChain<SootClass>();
         for (SootClass clazz : appClassChain)
         {
@@ -43,6 +44,20 @@ public class Util {
             }
         }
         return activities;
+    }
+
+    public static Chain<SootClass> getBladeDroidClasses()
+    {
+        Chain<SootClass> toReturn = new HashChain<SootClass>();
+        for (SootClass sootClass : Scene.v().getClasses())
+        {
+            if (sootClass.getJavaPackageName().contains("edu.uw.bladedroid"))
+            {
+                toReturn.add(sootClass);
+            }
+        }
+
+        return toReturn;
     }
 
     public static boolean isActivity(SootClass clazz)

@@ -5,6 +5,7 @@ import java.util.List;
 
 import soot.PackManager;
 import soot.Scene;
+import soot.SootClass;
 import soot.options.Options;
 
 public class Main {
@@ -46,7 +47,15 @@ public class Main {
 
         System.out.println("Start to output Jimple code.");
         Option.clearDirectory(Option.getOutputDir());
-        PackManager.v().writeOutput();
+        for (SootClass sootClass : Util.getActivities())
+        {
+            PackManager.v().writeClass(sootClass);
+        }
+        for (SootClass sootClass : Util.getBladeDroidClasses())
+        {
+            PackManager.v().writeClass(sootClass);
+        }
+        // PackManager.v().writeOutput();
     }
 
     public static void main(String[] args) {
