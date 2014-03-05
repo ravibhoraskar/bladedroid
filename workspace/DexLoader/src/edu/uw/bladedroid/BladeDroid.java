@@ -26,10 +26,10 @@ public final class BladeDroid {
         return instance;
     }
 
-    public static void onCreate(Activity activity, Bundle savedInstanceState) {
-        executeBlades(activity, savedInstanceState, new BladeExecutor() {
+    public static void onCreate(Activity activity, final Bundle savedInstanceState) {
+        executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onCreate(activity, savedInstanceState);
             }
         });
@@ -38,7 +38,7 @@ public final class BladeDroid {
     public static void onStart(Activity activity) {
         executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onStart(activity);
             }
         });
@@ -47,7 +47,7 @@ public final class BladeDroid {
     public static void onResume(Activity activity) {
         executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onResume(activity);
             }
         });
@@ -56,7 +56,7 @@ public final class BladeDroid {
     public static void onPause(Activity activity) {
         executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onPause(activity);
             }
         });
@@ -65,7 +65,7 @@ public final class BladeDroid {
     public static void onStop(Activity activity) {
         executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onStop(activity);
             }
         });
@@ -74,31 +74,68 @@ public final class BladeDroid {
     public static void onDestroy(Activity activity) {
         executeBlades(activity, new BladeExecutor() {
             @Override
-            public void execute(Activity activity, Bundle savedInstanceState, AbstractBlade b) {
+            public void execute(Activity activity, AbstractBlade b) {
                 b.onDestroy(activity);
             }
         });
     }
 
-    public static void onKeyLongPress(Activity activity, int keyCode, KeyEvent event)
+    public static void onKeyDown(Activity activity, final int keyCode, final KeyEvent event)
     {
-        Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
-        for (AbstractBlade b : blds) {
-            if (b != null && b.isForActivity(activity.getPackageName())) {
-                Log.i(TAG, "executing blade " + b);
-                b.onKeyLongPress(activity, keyCode, event);
-            } else {
-                Log.i(TAG, "omitting execution of blade " + b);
+        executeBlades(activity, new BladeExecutor() {
+            @Override
+            public void execute(Activity activity, AbstractBlade b) {
+                b.onKeyDown(activity, keyCode, event);
             }
-        }
+        });
     }
 
-    private static void executeBlades(Activity activity, Bundle savedInstanceState, BladeExecutor executor) {
+    public static void onKeyLongPress(Activity activity, final int keyCode, final KeyEvent event)
+    {
+        executeBlades(activity, new BladeExecutor() {
+            @Override
+            public void execute(Activity activity, AbstractBlade b) {
+                b.onKeyLongPress(activity, keyCode, event);
+            }
+        });
+    }
+
+    public static void onKeyMultiple(Activity activity, final int keyCode, final int repeatCount, final KeyEvent event)
+    {
+        executeBlades(activity, new BladeExecutor() {
+            @Override
+            public void execute(Activity activity, AbstractBlade b) {
+                b.onKeyMultiple(activity, keyCode, repeatCount, event);
+            }
+        });
+    }
+
+    public static void onKeyShortcut(Activity activity, final KeyEvent event)
+    {
+        executeBlades(activity, new BladeExecutor() {
+            @Override
+            public void execute(Activity activity, AbstractBlade b) {
+                b.onKeyShortcut(activity, event);
+            }
+        });
+    }
+
+    public static void onKeyUp(Activity activity, final int keyCode, final KeyEvent event)
+    {
+        executeBlades(activity, new BladeExecutor() {
+            @Override
+            public void execute(Activity activity, AbstractBlade b) {
+                b.onKeyUp(activity, keyCode, event);
+            }
+        });
+    }
+
+    private static void executeBlades(Activity activity, BladeExecutor executor, Object... arguments) {
         Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
         for (AbstractBlade b : blds) {
             if (b != null && b.isForActivity(activity.getPackageName())) {
                 Log.i(TAG, "executing blade " + b);
-                executor.execute(activity, savedInstanceState, b);
+                executor.execute(activity, b);
             } else {
                 Log.i(TAG, "omitting execution of blade " + b);
             }
@@ -114,7 +151,7 @@ public final class BladeDroid {
     }
 
     private interface BladeExecutor {
-        void execute(Activity a, Bundle savedIntanceState, AbstractBlade b);
+        void execute(Activity a, AbstractBlade b);
     }
 
 }
