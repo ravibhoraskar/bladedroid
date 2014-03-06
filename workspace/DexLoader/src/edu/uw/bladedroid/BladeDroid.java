@@ -80,54 +80,68 @@ public final class BladeDroid {
         });
     }
 
-    public static void onKeyDown(Activity activity, final int keyCode, final KeyEvent event)
+    public static boolean onKeyDown(Activity activity, final int keyCode, final KeyEvent event)
     {
-        executeBlades(activity, new BladeExecutor() {
+        return executeBlades(activity, new BooleanBladeExecutor() {
             @Override
-            public void execute(Activity activity, AbstractBlade b) {
-                b.onKeyDown(activity, keyCode, event);
+            public boolean execute(Activity activity, AbstractBlade b) {
+                return b.onKeyDown(activity, keyCode, event);
             }
         });
     }
 
-    public static void onKeyLongPress(Activity activity, final int keyCode, final KeyEvent event)
+    public static boolean onKeyLongPress(Activity activity, final int keyCode, final KeyEvent event)
     {
-        executeBlades(activity, new BladeExecutor() {
+        return executeBlades(activity, new BooleanBladeExecutor() {
             @Override
-            public void execute(Activity activity, AbstractBlade b) {
-                b.onKeyLongPress(activity, keyCode, event);
+            public boolean execute(Activity activity, AbstractBlade b) {
+                return b.onKeyLongPress(activity, keyCode, event);
             }
         });
     }
 
-    public static void onKeyMultiple(Activity activity, final int keyCode, final int repeatCount, final KeyEvent event)
+    public static boolean onKeyMultiple(Activity activity, final int keyCode, final int repeatCount, final KeyEvent event)
     {
-        executeBlades(activity, new BladeExecutor() {
+        return executeBlades(activity, new BooleanBladeExecutor() {
             @Override
-            public void execute(Activity activity, AbstractBlade b) {
-                b.onKeyMultiple(activity, keyCode, repeatCount, event);
+            public boolean execute(Activity activity, AbstractBlade b) {
+                return b.onKeyMultiple(activity, keyCode, repeatCount, event);
             }
         });
     }
 
-    public static void onKeyShortcut(Activity activity, final KeyEvent event)
+    public static boolean onKeyShortcut(Activity activity, final KeyEvent event)
     {
-        executeBlades(activity, new BladeExecutor() {
+        return executeBlades(activity, new BooleanBladeExecutor() {
             @Override
-            public void execute(Activity activity, AbstractBlade b) {
-                b.onKeyShortcut(activity, event);
+            public boolean execute(Activity activity, AbstractBlade b) {
+                return b.onKeyShortcut(activity, event);
             }
         });
     }
 
-    public static void onKeyUp(Activity activity, final int keyCode, final KeyEvent event)
+    public static boolean onKeyUp(Activity activity, final int keyCode, final KeyEvent event)
     {
-        executeBlades(activity, new BladeExecutor() {
+        return executeBlades(activity, new BooleanBladeExecutor() {
             @Override
-            public void execute(Activity activity, AbstractBlade b) {
-                b.onKeyUp(activity, keyCode, event);
+            public boolean execute(Activity activity, AbstractBlade b) {
+                return b.onKeyUp(activity, keyCode, event);
             }
         });
+    }
+
+    private static boolean executeBlades(Activity activity, BooleanBladeExecutor executor) {
+        Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
+        boolean ret = false;
+        for (AbstractBlade b : blds) {
+            if (b != null && b.isForActivity(activity.getPackageName())) {
+                Log.i(TAG, "executing blade " + b);
+                ret = ret || executor.execute(activity, b);
+            } else {
+                Log.i(TAG, "omitting execution of blade " + String.valueOf(b));
+            }
+        }
+        return ret;
     }
 
     private static void executeBlades(Activity activity, BladeExecutor executor) {
@@ -144,6 +158,10 @@ public final class BladeDroid {
 
     private BladeLoader getBladeLoader() {
         return loader;
+    }
+
+    private interface BooleanBladeExecutor {
+        boolean execute(Activity a, AbstractBlade b);
     }
 
     private interface BladeExecutor {
