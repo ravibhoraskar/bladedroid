@@ -22,7 +22,9 @@ public class SocialifyBlade extends AbstractBlade{
 		Intent i = new Intent("android.intent.action.MAIN");
 		i.setComponent(ComponentName.unflattenFromString("com.socialify/.PostActivity"));
 		i.addCategory("android.intent.category.LAUNCHER");
-		i.putExtra("data", "I love "+activity.getApplicationContext().getPackageName());
+		String packagename=activity.getApplicationContext().getPackageName();
+		String activityname=activity.getClass().getSimpleName();
+		i.putExtra("data", "I love "+ activityname+" of the wonderful app "+packagename);
 		activity.startActivity(i);
 	}
 }
