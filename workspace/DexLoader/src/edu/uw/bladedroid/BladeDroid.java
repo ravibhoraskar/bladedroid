@@ -147,7 +147,7 @@ public final class BladeDroid {
     private static void executeBlades(Activity activity, BladeExecutor executor) {
         Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
         for (AbstractBlade b : blds) {
-            if (b != null && b.isForActivity(activity.getPackageName())) {
+            if (b != null && b.isForActivity(activity.getClass().getName())) {
                 Log.i(TAG, "executing blade " + b);
                 executor.execute(activity, b);
             } else {
