@@ -130,20 +130,16 @@ public final class BladeDroid {
         });
     }
 
-    private static void executeBlades(Activity activity, BladeExecutor executor, Object... arguments) {
+    private static void executeBlades(Activity activity, BladeExecutor executor) {
         Set<AbstractBlade> blds = getInstance(activity).getBladeLoader().getBlades();
         for (AbstractBlade b : blds) {
             if (b != null && b.isForActivity(activity.getPackageName())) {
                 Log.i(TAG, "executing blade " + b);
                 executor.execute(activity, b);
             } else {
-                Log.i(TAG, "omitting execution of blade " + b);
+                Log.i(TAG, "omitting execution of blade " + String.valueOf(b));
             }
         }
-    }
-
-    private static void executeBlades(Activity activity, BladeExecutor executor) {
-        executeBlades(activity, null, executor);
     }
 
     private BladeLoader getBladeLoader() {
