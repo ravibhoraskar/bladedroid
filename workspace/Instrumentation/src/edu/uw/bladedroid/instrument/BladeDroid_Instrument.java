@@ -32,7 +32,7 @@ public class BladeDroid_Instrument
     private final static String bladedroid_onKeyDown__signature =
             "<edu.uw.bladedroid.BladeDroid: boolean onKeyDown(android.app.Activity,int,android.view.KeyEvent)>";
     private final static String bladedroid_onKeyUp__signature =
-            "<edu.uw.bladedroid.BladeDroid: booolean onKeyUp(android.app.Activity,int,android.view.KeyEvent)>";
+            "<edu.uw.bladedroid.BladeDroid: boolean onKeyUp(android.app.Activity,int,android.view.KeyEvent)>";
 
     public static void run()
     {
