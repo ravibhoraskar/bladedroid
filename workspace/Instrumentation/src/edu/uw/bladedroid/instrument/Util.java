@@ -10,6 +10,7 @@ import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
+import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.util.Chain;
@@ -24,6 +25,9 @@ public class Util {
     public static final String onPauseName = "onPause";
     public static final String onStopName = "onStop";
     public static final String onDestroyName = "onDestroy";
+    public static final String onKeyLongPressName = "onKeyLongPress";
+    public static final String onKeyDownName = "onKeyDown";
+    public static final String onKeyUpName = "onKeyUp";
 
     private static SootClass activityClass = null;
 
@@ -118,6 +122,35 @@ public class Util {
         insertBeforeReturn(units, ti);
     }
 
+    public static void insertAfterIdentityStmt(PatchingChain<Unit> units,
+            Chain<Unit> toInsert) {
+        Unit point = null;
+        Iterator<Unit> unitIt = units.snapshotIterator();
+        boolean foundIdentityStmt = false;
+        while (unitIt.hasNext())
+        {
+            Unit unit = unitIt.next();
+            if (!(unit instanceof IdentityStmt) && !(unit instanceof EnterMonitorStmt))
+            {
+                point = units.getPredOf(unit);
+                break;
+            }
+            else
+            {
+                foundIdentityStmt = true;
+            }
+        }
+        if (point == null && foundIdentityStmt)
+        {
+            point = units.getLast();
+        }
+        else if (point == null && !foundIdentityStmt)
+        {
+            units.insertBefore(toInsert, units.getFirst());
+        }
+        units.insertAfter(toInsert, point);
+    }
+
     public static Local findthislocal(Chain<Unit> units)
     {
         // TODO: HACK! assume the first identity stmt is always for 'this'
@@ -149,6 +182,27 @@ public class Util {
                 {
                     thislocalseen = true;
                 }
+            }
+        }
+        throw new RuntimeException("Parameter Local not found (maybe method has no parameters?)");
+    }
+
+    public static Local findsecondparamlocal(PatchingChain<Unit> units)
+    {
+        // TODO HACK! assume the second identity stmts are in the order
+        // "this","param1","param2"...
+        int localsseen = 0;
+        for (Unit unit : units)
+        {
+            if (unit instanceof IdentityStmt)
+            {
+                if (localsseen == 2)
+                {
+                    IdentityStmt istmt = (IdentityStmt) unit;
+                    return (Local) istmt.getLeftOp();
+                }
+
+                localsseen++;
             }
         }
         throw new RuntimeException("Parameter Local not found (maybe method has no parameters?)");

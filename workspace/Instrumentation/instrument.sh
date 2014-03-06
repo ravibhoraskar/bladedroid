@@ -58,6 +58,6 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEY -storepass
 zipalign -v -f 4 output/$NAME.apk $NAME-aligned.apk
 
 echo "Cleaning Up"
-rm -rf output
+#rm -rf output
 echo "APK sucessfully instrumented"
 

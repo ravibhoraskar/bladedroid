@@ -3,7 +3,6 @@ package edu.uw.bladedroid.blade;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.KeyEvent;
 
 public class SocialifyBlade extends AbstractBlade{	
