@@ -1,39 +1,36 @@
 package edu.uw.bladedroid.instrument;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import soot.Local;
 import soot.PatchingChain;
+import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.Type;
 import soot.Unit;
+import soot.VoidType;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
+import soot.jimple.IntConstant;
+import soot.jimple.Jimple;
+import soot.jimple.NullConstant;
 import soot.jimple.ReturnVoidStmt;
 import soot.util.Chain;
 import soot.util.HashChain;
 
 public class Util {
 
-    private static final String ActivityClassName = "android.app.Activity";
-    public static final String onCreateName = "onCreate";
-    public static final String onStartName = "onStart";
-    public static final String onResumeName = "onResume";
-    public static final String onPauseName = "onPause";
-    public static final String onStopName = "onStop";
-    public static final String onDestroyName = "onDestroy";
-    public static final String onKeyLongPressName = "onKeyLongPress";
-    public static final String onKeyDownName = "onKeyDown";
-    public static final String onKeyUpName = "onKeyUp";
-
     private static SootClass activityClass = null;
 
     public static void init()
     {
-        activityClass = Scene.v().getSootClass(ActivityClassName);
+        activityClass = Scene.v().getSootClass(Info.ActivityClassName);
     }
 
     public static Chain<SootClass> getActivities()
@@ -218,4 +215,60 @@ public class Util {
         return Scene.v().getSootClass(clazz);
     }
 
+    public static SootMethod createMethod(String methodSignature)
+    {
+        String cname = Scene.v().signatureToClass(methodSignature);
+        String mname = Scene.v().signatureToSubsignature(methodSignature);
+        System.out.println("SUBSIGNATURE: " + mname);
+
+        return null;
+    }
+
+    public static void addMethodToClass(SootMethod method, SootClass activity)
+    {
+        method.setDeclaringClass(activity);
+        activity.addMethod(method);
+        method.setActiveBody(Jimple.v().newBody(method));
+
+        Local thislocal = Jimple.v().newLocal("thislocal", activity.getType());
+        method.getActiveBody().getLocals().add(thislocal);
+
+        method.getActiveBody().getUnits().add(Jimple.v().newIdentityStmt(
+                thislocal, Jimple.v().newThisRef(activity.getType())));
+
+        List<Local> paramlocals = new ArrayList<Local>();
+        for (int i = 0; i < method.getParameterCount(); i++)
+        {
+            Local l = Jimple.v().newLocal("local" + i, method.getParameterType(i));
+            method.getActiveBody().getLocals().add(l);
+            method.getActiveBody().getUnits().add(Jimple.v().newIdentityStmt(
+                    l, Jimple.v().newParameterRef(method.getParameterType(i), i)));
+            paramlocals.add(l);
+        }
+
+        method.getActiveBody().getUnits().add(Jimple.v().
+                newInvokeStmt(Jimple.v().newSpecialInvokeExpr(
+                        thislocal,
+                        activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
+                        paramlocals)));
+
+        Type returnType = method.getReturnType();
+        if (returnType instanceof RefType)
+        {
+            method.getActiveBody().getUnits().add(Jimple.v().
+                    newReturnStmt(NullConstant.v()));
+        }
+        else if (returnType instanceof VoidType)
+        {
+            method.getActiveBody().getUnits().add(Jimple.v().
+                    newReturnVoidStmt());
+        }
+        else
+        {
+            method.getActiveBody().getUnits().add(Jimple.v().
+                    newReturnStmt(IntConstant.v(0)));
+
+        }
+
+    }
 }

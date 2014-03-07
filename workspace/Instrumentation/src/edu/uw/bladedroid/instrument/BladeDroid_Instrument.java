@@ -14,49 +14,81 @@ import soot.util.HashChain;
 
 public class BladeDroid_Instrument
 {
-    private final static String bladedroid__class = "edu.uw.bladedroid.BladeDroid";
-    private final static String bladedroid_onCreate__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onCreate(android.app.Activity,android.os.Bundle)>";
-    private final static String bladedroid_onStart__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onStart(android.app.Activity)>";
-    private final static String bladedroid_onResume__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onResume(android.app.Activity)>";
-    private final static String bladedroid_onPause__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onPause(android.app.Activity)>";
-    private final static String bladedroid_onStop__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onStop(android.app.Activity)>";
-    private final static String bladedroid_onDestroy__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onDestroy(android.app.Activity)>";
-    private final static String bladedroid_onKeyLongPress__signature =
-            "<edu.uw.bladedroid.BladeDroid: boolean onKeyLongPress(android.app.Activity,int,android.view.KeyEvent)>";
-    private final static String bladedroid_onKeyDown__signature =
-            "<edu.uw.bladedroid.BladeDroid: boolean onKeyDown(android.app.Activity,int,android.view.KeyEvent)>";
-    private final static String bladedroid_onKeyUp__signature =
-            "<edu.uw.bladedroid.BladeDroid: boolean onKeyUp(android.app.Activity,int,android.view.KeyEvent)>";
 
     public static void run()
     {
-        SootMethod bladedroid_onCreate = Util.getMethod(bladedroid_onCreate__signature, bladedroid__class);
-        SootMethod bladedroid_onStart = Util.getMethod(bladedroid_onStart__signature, bladedroid__class);
-        SootMethod bladedroid_onResume = Util.getMethod(bladedroid_onResume__signature, bladedroid__class);
-        SootMethod bladedroid_onPause = Util.getMethod(bladedroid_onPause__signature, bladedroid__class);
-        SootMethod bladedroid_onStop = Util.getMethod(bladedroid_onStop__signature, bladedroid__class);
-        SootMethod bladedroid_onDestroy = Util.getMethod(bladedroid_onDestroy__signature, bladedroid__class);
-        SootMethod bladedroid_onKeyLongPress = Util.getMethod(bladedroid_onKeyLongPress__signature, bladedroid__class);
-        SootMethod bladedroid_onKeyDown = Util.getMethod(bladedroid_onKeyDown__signature, bladedroid__class);
-        SootMethod bladedroid_onKeyUp = Util.getMethod(bladedroid_onKeyUp__signature, bladedroid__class);
+        SootMethod bladedroid_onCreate = Util.getMethod(Info.bladedroid_onCreate__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onStart = Util.getMethod(Info.bladedroid_onStart__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onResume = Util.getMethod(Info.bladedroid_onResume__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onPause = Util.getMethod(Info.bladedroid_onPause__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onStop = Util.getMethod(Info.bladedroid_onStop__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onDestroy = Util.getMethod(Info.bladedroid_onDestroy__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyLongPress = Util.getMethod(Info.bladedroid_onKeyLongPress__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyDown = Util.getMethod(Info.bladedroid_onKeyDown__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyUp = Util.getMethod(Info.bladedroid_onKeyUp__signature, Info.bladedroid__class);
         for (SootClass activity : Util.getActivities())
         {
-            instrumentCallAtEnd(activity, Util.onCreateName, bladedroid_onCreate);
-            instrumentCallAtEnd(activity, Util.onStartName, bladedroid_onStart);
-            instrumentCallAtEnd(activity, Util.onResumeName, bladedroid_onResume);
-            instrumentCallAtEnd(activity, Util.onPauseName, bladedroid_onPause);
-            instrumentCallAtEnd(activity, Util.onStopName, bladedroid_onStop);
-            instrumentCallAtEnd(activity, Util.onDestroyName, bladedroid_onDestroy);
-            instrumentOnKey(activity, Util.onKeyLongPressName, bladedroid_onKeyLongPress);
-            instrumentOnKey(activity, Util.onKeyDownName, bladedroid_onKeyDown);
-            instrumentOnKey(activity, Util.onKeyUpName, bladedroid_onKeyUp);
+            createMethodsIfDontExist(activity);
+
+            instrumentCallAtEnd(activity, Info.onCreateName, bladedroid_onCreate);
+            instrumentCallAtEnd(activity, Info.onStartName, bladedroid_onStart);
+            instrumentCallAtEnd(activity, Info.onResumeName, bladedroid_onResume);
+            instrumentCallAtEnd(activity, Info.onPauseName, bladedroid_onPause);
+            instrumentCallAtEnd(activity, Info.onStopName, bladedroid_onStop);
+            instrumentCallAtEnd(activity, Info.onDestroyName, bladedroid_onDestroy);
+            instrumentOnKey(activity, Info.onKeyLongPressName, bladedroid_onKeyLongPress);
+            instrumentOnKey(activity, Info.onKeyDownName, bladedroid_onKeyDown);
+            instrumentOnKey(activity, Info.onKeyUpName, bladedroid_onKeyUp);
         }
+    }
+
+    private static void createMethodsIfDontExist(SootClass activity) {
+        if (!activity.declaresMethodByName(Info.onCreateName))
+        {
+            SootMethod method = new SootMethod(Info.onCreateName, Info.onCreateParams(), Info.onCreateReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onStartName))
+        {
+            SootMethod method = new SootMethod(Info.onStartName, Info.onStartParams(), Info.onStartReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onResumeName))
+        {
+            SootMethod method = new SootMethod(Info.onResumeName, Info.onResumeParams(), Info.onResumeReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onPauseName))
+        {
+            SootMethod method = new SootMethod(Info.onPauseName, Info.onPauseParams(), Info.onPauseReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onStopName))
+        {
+            SootMethod method = new SootMethod(Info.onStopName, Info.onStopParams(), Info.onStopReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onDestroyName))
+        {
+            SootMethod method = new SootMethod(Info.onDestroyName, Info.onDestroyParams(), Info.onDestroyReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onKeyLongPressName))
+        {
+            SootMethod method = new SootMethod(Info.onKeyLongPressName, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onKeyDownName))
+        {
+            SootMethod method = new SootMethod(Info.onKeyDownName, Info.onKeyDownParams(), Info.onKeyDownReturn);
+            Util.addMethodToClass(method, activity);
+        }
+        if (!activity.declaresMethodByName(Info.onKeyUpName))
+        {
+            SootMethod method = new SootMethod(Info.onKeyUpName, Info.onKeyUpParams(), Info.onKeyUpReturn);
+            Util.addMethodToClass(method, activity);
+        }
+
     }
 
     private static void instrumentOnKey(SootClass activity, String methodName, SootMethod toCall)
@@ -67,8 +99,7 @@ public class BladeDroid_Instrument
             method = activity.getMethodByName(methodName);
         } catch (RuntimeException e)
         {
-            // TODO: Create method if not exist
-            return;
+            throw new RuntimeException("Method not found: " + methodName);
         }
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
@@ -102,8 +133,7 @@ public class BladeDroid_Instrument
 
         } catch (RuntimeException e)
         {
-            // TODO: Create method if not exist
-            return;
+            throw new RuntimeException("Method not found: " + methodName);
         }
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
