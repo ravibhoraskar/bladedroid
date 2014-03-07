@@ -45,48 +45,39 @@ public class BladeDroid_Instrument
     private static void createMethodsIfDontExist(SootClass activity) {
         if (!activity.declaresMethodByName(Info.onCreateName))
         {
-            SootMethod method = new SootMethod(Info.onCreateName, Info.onCreateParams(), Info.onCreateReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onCreateName, Info.onCreateParams(), Info.onCreateReturn);
         }
         if (!activity.declaresMethodByName(Info.onStartName))
         {
-            SootMethod method = new SootMethod(Info.onStartName, Info.onStartParams(), Info.onStartReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onStartName, Info.onStartParams(), Info.onStartReturn);
         }
         if (!activity.declaresMethodByName(Info.onResumeName))
         {
-            SootMethod method = new SootMethod(Info.onResumeName, Info.onResumeParams(), Info.onResumeReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onResumeName, Info.onResumeParams(), Info.onResumeReturn);
         }
         if (!activity.declaresMethodByName(Info.onPauseName))
         {
-            SootMethod method = new SootMethod(Info.onPauseName, Info.onPauseParams(), Info.onPauseReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onPauseName, Info.onPauseParams(), Info.onPauseReturn);
         }
         if (!activity.declaresMethodByName(Info.onStopName))
         {
-            SootMethod method = new SootMethod(Info.onStopName, Info.onStopParams(), Info.onStopReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onStopName, Info.onStopParams(), Info.onStopReturn);
         }
         if (!activity.declaresMethodByName(Info.onDestroyName))
         {
-            SootMethod method = new SootMethod(Info.onDestroyName, Info.onDestroyParams(), Info.onDestroyReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onDestroyName, Info.onDestroyParams(), Info.onDestroyReturn);
         }
         if (!activity.declaresMethodByName(Info.onKeyLongPressName))
         {
-            SootMethod method = new SootMethod(Info.onKeyLongPressName, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onKeyLongPressName, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
         }
         if (!activity.declaresMethodByName(Info.onKeyDownName))
         {
-            SootMethod method = new SootMethod(Info.onKeyDownName, Info.onKeyDownParams(), Info.onKeyDownReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onKeyDownName, Info.onKeyDownParams(), Info.onKeyDownReturn);
         }
         if (!activity.declaresMethodByName(Info.onKeyUpName))
         {
-            SootMethod method = new SootMethod(Info.onKeyUpName, Info.onKeyUpParams(), Info.onKeyUpReturn);
-            Util.addMethodToClass(method, activity);
+            Util.addMethodToClass(activity, Info.onKeyUpName, Info.onKeyUpParams(), Info.onKeyUpReturn);
         }
 
     }
