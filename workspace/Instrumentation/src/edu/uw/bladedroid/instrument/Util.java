@@ -8,7 +8,6 @@ import java.util.Set;
 
 import soot.Local;
 import soot.PatchingChain;
-import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
@@ -17,9 +16,7 @@ import soot.Unit;
 import soot.VoidType;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
-import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
-import soot.jimple.NullConstant;
 import soot.jimple.ReturnVoidStmt;
 import soot.util.Chain;
 import soot.util.HashChain;
@@ -246,28 +243,27 @@ public class Util {
             paramlocals.add(l);
         }
 
-        method.getActiveBody().getUnits().add(Jimple.v().
-                newInvokeStmt(Jimple.v().newSpecialInvokeExpr(
-                        thislocal,
-                        activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
-                        paramlocals)));
-
-        if (returnType instanceof RefType)
+        if (returnType instanceof VoidType)
         {
             method.getActiveBody().getUnits().add(Jimple.v().
-                    newReturnStmt(NullConstant.v()));
-        }
-        else if (returnType instanceof VoidType)
-        {
+                    newInvokeStmt(Jimple.v().newSpecialInvokeExpr(
+                            thislocal,
+                            activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
+                            paramlocals)));
             method.getActiveBody().getUnits().add(Jimple.v().
                     newReturnVoidStmt());
         }
         else
         {
+            Local retLocal = Jimple.v().newLocal("returnlocal", returnType);
+            method.getActiveBody().getLocals().add(retLocal);
             method.getActiveBody().getUnits().add(Jimple.v().
-                    newReturnStmt(IntConstant.v(0)));
-
+                    newAssignStmt(retLocal, Jimple.v().newSpecialInvokeExpr(
+                            thislocal,
+                            activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
+                            paramlocals)));
+            method.getActiveBody().getUnits().add(Jimple.v().
+                    newReturnStmt(retLocal));
         }
-
     }
 }
