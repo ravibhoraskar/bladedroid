@@ -224,8 +224,8 @@ public class Util {
         return null;
     }
 
-    public static void addMethodToClass(SootMethod method, SootClass activity)
-    {
+    public static void addMethodToClass(SootClass activity, String methodName, List<Type> params, Type returnType) {
+        SootMethod method = new SootMethod(methodName, params, returnType);
         method.setDeclaringClass(activity);
         activity.addMethod(method);
         method.setActiveBody(Jimple.v().newBody(method));
@@ -252,7 +252,6 @@ public class Util {
                         activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
                         paramlocals)));
 
-        Type returnType = method.getReturnType();
         if (returnType instanceof RefType)
         {
             method.getActiveBody().getUnits().add(Jimple.v().
