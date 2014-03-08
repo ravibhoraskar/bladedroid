@@ -6,17 +6,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import soot.BooleanType;
+import soot.ByteType;
+import soot.CharType;
+import soot.DoubleType;
+import soot.FloatType;
+import soot.IntType;
 import soot.Local;
+import soot.LongType;
 import soot.PatchingChain;
 import soot.Scene;
+import soot.ShortType;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
+import soot.Value;
 import soot.VoidType;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
+import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
+import soot.jimple.NullConstant;
 import soot.jimple.ReturnVoidStmt;
 import soot.util.Chain;
 import soot.util.HashChain;
@@ -212,19 +223,28 @@ public class Util {
         return Scene.v().getSootClass(clazz);
     }
 
-    public static SootMethod createMethod(String methodSignature)
-    {
-        String cname = Scene.v().signatureToClass(methodSignature);
-        String mname = Scene.v().signatureToSubsignature(methodSignature);
-        System.out.println("SUBSIGNATURE: " + mname);
+    public static void addMethodToClass(SootClass activity, String methodSubSignature, List<Type> params, Type returnType) {
+        if (activity.isPhantom() || activity.isPhantomClass() || activity.isLibraryClass())
+            return;
+        if (!activity.getSuperclass().declaresMethod(methodSubSignature))
+        {
+            addMethodToClass(activity.getSuperclass(), methodSubSignature, params, returnType);
+        }
 
-        return null;
-    }
-
-    public static void addMethodToClass(SootClass activity, String methodName, List<Type> params, Type returnType) {
+        System.out.println("Adding method: " + methodSubSignature + " to class: " + activity);
+        String methodName = subSignatureToName(methodSubSignature);
         SootMethod method = new SootMethod(methodName, params, returnType);
         method.setDeclaringClass(activity);
-        activity.addMethod(method);
+        try // Hack to avoid weird error.
+        {
+            activity.addMethod(method);
+        } catch (RuntimeException e)
+        {
+            System.err.println("Weird error: " + e.getMessage());
+            return;
+        }
+        System.out.println("Added method: " + method + " to class: " + activity);
+
         method.setActiveBody(Jimple.v().newBody(method));
 
         Local thislocal = Jimple.v().newLocal("thislocal", activity.getType());
@@ -245,11 +265,17 @@ public class Util {
 
         if (returnType instanceof VoidType)
         {
-            method.getActiveBody().getUnits().add(Jimple.v().
-                    newInvokeStmt(Jimple.v().newSpecialInvokeExpr(
-                            thislocal,
-                            activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
-                            paramlocals)));
+            try
+            {
+                method.getActiveBody().getUnits().add(Jimple.v().
+                        newInvokeStmt(Jimple.v().newSpecialInvokeExpr(
+                                thislocal,
+                                activity.getSuperclass().getMethod(method.getSubSignature()).makeRef(),
+                                paramlocals)));
+            } catch (RuntimeException e)
+            {
+                System.out.println("Superclass of " + activity + " no have " + method.getSubSignature());
+            }
             method.getActiveBody().getUnits().add(Jimple.v().
                     newReturnVoidStmt());
         }
@@ -257,13 +283,51 @@ public class Util {
         {
             Local retLocal = Jimple.v().newLocal("returnlocal", returnType);
             method.getActiveBody().getLocals().add(retLocal);
-            method.getActiveBody().getUnits().add(Jimple.v().
-                    newAssignStmt(retLocal, Jimple.v().newSpecialInvokeExpr(
-                            thislocal,
-                            activity.getSuperclass().getMethodByName(method.getName()).makeRef(),
-                            paramlocals)));
+            try
+            {
+                method.getActiveBody().getUnits().add(Jimple.v().
+                        newAssignStmt(retLocal, Jimple.v().newSpecialInvokeExpr(
+                                thislocal,
+                                activity.getSuperclass().getMethod(method.getSubSignature()).makeRef(),
+                                paramlocals)));
+            } catch (RuntimeException e)
+            {
+                System.out.println("Superclass of " + activity + " no have " + method.getSubSignature());
+                method.getActiveBody().getUnits().add(Jimple.v().
+                        newAssignStmt(retLocal, getDefaultValue(returnType)));
+            }
             method.getActiveBody().getUnits().add(Jimple.v().
                     newReturnStmt(retLocal));
         }
+    }
+
+    public static Value getDefaultValue(Type type) {
+
+        if ((type instanceof BooleanType)
+                || (type instanceof ByteType)
+                || (type instanceof CharType)
+                || (type instanceof DoubleType)
+                || (type instanceof FloatType)
+                || (type instanceof IntType)
+                || (type instanceof LongType)
+                || (type instanceof ShortType))
+        {
+            return IntConstant.v(0);
+        }
+        else
+        {
+            return NullConstant.v();
+        }
+    }
+
+    public static String subSignatureToName(String subSignature) {
+        int index = subSignature.indexOf('(');
+        if (index < 0)
+        {
+            throw new RuntimeException("Invalid subSignature");
+        }
+        subSignature = subSignature.substring(0, index);
+        index = subSignature.indexOf(' ');
+        return subSignature.substring(index + 1);
     }
 }

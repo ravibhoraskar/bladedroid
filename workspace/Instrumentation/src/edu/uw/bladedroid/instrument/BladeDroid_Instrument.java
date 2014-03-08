@@ -30,67 +30,73 @@ public class BladeDroid_Instrument
         {
             createMethodsIfDontExist(activity);
 
-            instrumentCallAtEnd(activity, Info.onCreateName, bladedroid_onCreate);
-            instrumentCallAtEnd(activity, Info.onStartName, bladedroid_onStart);
-            instrumentCallAtEnd(activity, Info.onResumeName, bladedroid_onResume);
-            instrumentCallAtEnd(activity, Info.onPauseName, bladedroid_onPause);
-            instrumentCallAtEnd(activity, Info.onStopName, bladedroid_onStop);
-            instrumentCallAtEnd(activity, Info.onDestroyName, bladedroid_onDestroy);
-            instrumentOnKey(activity, Info.onKeyLongPressName, bladedroid_onKeyLongPress);
-            instrumentOnKey(activity, Info.onKeyDownName, bladedroid_onKeyDown);
-            instrumentOnKey(activity, Info.onKeyUpName, bladedroid_onKeyUp);
+            instrumentCallAtEnd(activity, Info.onCreateSubSignature, bladedroid_onCreate);
+            instrumentCallAtEnd(activity, Info.onStartSubSignature, bladedroid_onStart);
+            instrumentCallAtEnd(activity, Info.onResumeSubSignature, bladedroid_onResume);
+            instrumentCallAtEnd(activity, Info.onPauseSubSignature, bladedroid_onPause);
+            instrumentCallAtEnd(activity, Info.onStopSubSignature, bladedroid_onStop);
+            instrumentCallAtEnd(activity, Info.onDestroySubSignature, bladedroid_onDestroy);
+            instrumentOnKey(activity, Info.onKeyLongPressSubSignature, bladedroid_onKeyLongPress);
+            instrumentOnKey(activity, Info.onKeyDownSubSignature, bladedroid_onKeyDown);
+            instrumentOnKey(activity, Info.onKeyUpSubSignature, bladedroid_onKeyUp);
         }
     }
 
     private static void createMethodsIfDontExist(SootClass activity) {
-        if (!activity.declaresMethodByName(Info.onCreateName))
+        if (!activity.declaresMethod(Info.onCreateSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onCreateName, Info.onCreateParams(), Info.onCreateReturn);
+            System.out.println("subsig: " + Info.onCreateSubSignature);
+            Util.addMethodToClass(activity, Info.onCreateSubSignature, Info.onCreateParams(), Info.onCreateReturn);
         }
-        if (!activity.declaresMethodByName(Info.onStartName))
+        if (!activity.declaresMethod(Info.onStartSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onStartName, Info.onStartParams(), Info.onStartReturn);
+            Util.addMethodToClass(activity, Info.onStartSubSignature, Info.onStartParams(), Info.onStartReturn);
         }
-        if (!activity.declaresMethodByName(Info.onResumeName))
+        if (!activity.declaresMethod(Info.onResumeSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onResumeName, Info.onResumeParams(), Info.onResumeReturn);
+            Util.addMethodToClass(activity, Info.onResumeSubSignature, Info.onResumeParams(), Info.onResumeReturn);
         }
-        if (!activity.declaresMethodByName(Info.onPauseName))
+        if (!activity.declaresMethod(Info.onPauseSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onPauseName, Info.onPauseParams(), Info.onPauseReturn);
+            Util.addMethodToClass(activity, Info.onPauseSubSignature, Info.onPauseParams(), Info.onPauseReturn);
         }
-        if (!activity.declaresMethodByName(Info.onStopName))
+        if (!activity.declaresMethod(Info.onStopSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onStopName, Info.onStopParams(), Info.onStopReturn);
+            Util.addMethodToClass(activity, Info.onStopSubSignature, Info.onStopParams(), Info.onStopReturn);
         }
-        if (!activity.declaresMethodByName(Info.onDestroyName))
+        if (!activity.declaresMethod(Info.onDestroySubSignature))
         {
-            Util.addMethodToClass(activity, Info.onDestroyName, Info.onDestroyParams(), Info.onDestroyReturn);
+            Util.addMethodToClass(activity, Info.onDestroySubSignature, Info.onDestroyParams(), Info.onDestroyReturn);
         }
-        if (!activity.declaresMethodByName(Info.onKeyLongPressName))
+        if (!activity.declaresMethod(Info.onKeyLongPressSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onKeyLongPressName, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
+            Util.addMethodToClass(activity, Info.onKeyLongPressSubSignature, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
         }
-        if (!activity.declaresMethodByName(Info.onKeyDownName))
+        if (!activity.declaresMethod(Info.onKeyDownSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onKeyDownName, Info.onKeyDownParams(), Info.onKeyDownReturn);
+            Util.addMethodToClass(activity, Info.onKeyDownSubSignature, Info.onKeyDownParams(), Info.onKeyDownReturn);
         }
-        if (!activity.declaresMethodByName(Info.onKeyUpName))
+        if (!activity.declaresMethod(Info.onKeyUpSubSignature))
         {
-            Util.addMethodToClass(activity, Info.onKeyUpName, Info.onKeyUpParams(), Info.onKeyUpReturn);
+            Util.addMethodToClass(activity, Info.onKeyUpSubSignature, Info.onKeyUpParams(), Info.onKeyUpReturn);
+        }
+
+        for (SootMethod m : activity.getMethods())
+        {
+            System.out.println("Method: " + m);
         }
 
     }
 
-    private static void instrumentOnKey(SootClass activity, String methodName, SootMethod toCall)
+    private static void instrumentOnKey(SootClass activity, String methodSubSignature, SootMethod toCall)
     {
         SootMethod method;
         try
         {
-            method = activity.getMethodByName(methodName);
+            method = activity.getMethod(methodSubSignature);
         } catch (RuntimeException e)
         {
-            throw new RuntimeException("Method not found: " + methodName);
+            throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
         }
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
@@ -115,16 +121,16 @@ public class BladeDroid_Instrument
         Util.insertAfterIdentityStmt(body.getUnits(), toInsert);
     }
 
-    private static void instrumentCallAtEnd(SootClass activity, String methodName, SootMethod toCall)
+    private static void instrumentCallAtEnd(SootClass activity, String methodSubSignature, SootMethod toCall)
     {
         SootMethod method;
         try
         {
-            method = activity.getMethodByName(methodName);
+            method = activity.getMethod(methodSubSignature);
 
         } catch (RuntimeException e)
         {
-            throw new RuntimeException("Method not found: " + methodName);
+            throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
         }
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
