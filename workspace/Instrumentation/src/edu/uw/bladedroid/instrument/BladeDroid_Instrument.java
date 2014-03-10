@@ -3,6 +3,7 @@ package edu.uw.bladedroid.instrument;
 import soot.Body;
 import soot.BooleanType;
 import soot.Local;
+import soot.Modifier;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
@@ -98,6 +99,7 @@ public class BladeDroid_Instrument
         {
             throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
         }
+        method.setModifiers(method.getModifiers() & (~Modifier.FINAL));
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
         Local thislocal = Util.findthislocal(body.getUnits());
@@ -132,6 +134,7 @@ public class BladeDroid_Instrument
         {
             throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
         }
+        method.setModifiers(method.getModifiers() & (~Modifier.FINAL));
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
         Local thislocal = Util.findthislocal(body.getUnits());

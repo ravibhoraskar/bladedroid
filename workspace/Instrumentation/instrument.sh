@@ -18,6 +18,7 @@ if [ ! -f "$ANDROID_JAR" ]; then
 	echo "$ANDROID_JAR"" does not exist. Please check the ANDROID_HOME environment variable"
 	exit
 fi
+OUT="$APK"".d"
 #echo "$ANDROID_JAR"
 
 KEY=~/.android/debug.keystore
@@ -30,34 +31,34 @@ libs/soot-trunk.jar:\
 libs/baksmali-2.0.2.jar"
 
 # Instrumentation
-java -Xss50m -Xmx1500m -jar instrument.jar -apk $APK -lib bladedroid.jar -aj $ANDROID_JAR
+java -Xss50m -Xmx1500m -jar instrument.jar -apk $APK -lib bladedroid.jar -aj $ANDROID_JAR -d "$OUT"
 
 #Jimple to dex
-java -classpath ${JAVA_CLASSPATH} soot.Main -allow-phantom-refs -src-prec J -ire -f dex -process-dir output/ -d output/
+java -classpath ${JAVA_CLASSPATH} soot.Main -allow-phantom-refs -src-prec J -ire -f dex -process-dir "$OUT" -d "$OUT"/
 
 #Dex to smali
-baksmali -o output/smali output/classes.dex
+baksmali -o "$OUT"/smali "$OUT"/classes.dex
 
 # Decompile APK
-apktool d "$APK" output/$NAME
+apktool d "$APK" "$OUT"/$NAME
 
 # Add permission
-sed -i.bak $'s/^.*<application .*/    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/>\\\n& /g' output/$NAME/AndroidManifest.xml
-rm output/$NAME/AndroidManifest.xml.bak
+sed -i.bak $'s/^.*<application .*/    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/>\\\n& /g' "$OUT"/$NAME/AndroidManifest.xml
+rm "$OUT"/$NAME/AndroidManifest.xml.bak
 
 # Copy modified smali
-cp -r output/smali/* output/"$NAME"/smali/
+cp -r "$OUT"/smali/* "$OUT"/"$NAME"/smali/
 
 #Build back APK
-apktool b output/$NAME output/"$NAME".apk
+apktool b "$OUT"/$NAME "$OUT"/"$NAME".apk
 
 # Sign APK
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEY -storepass $PW output/"$NAME".apk $ALIAS
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEY -storepass $PW "$OUT"/"$NAME".apk $ALIAS
 
 # Align APK
-zipalign -v -f 4 output/$NAME.apk $NAME-aligned.apk
+zipalign -v -f 4 "$OUT"/$NAME.apk $NAME-aligned.apk
 
 echo "Cleaning Up"
-#rm -rf output
+#rm -rf "$OUT"
 echo "APK sucessfully instrumented"
 
