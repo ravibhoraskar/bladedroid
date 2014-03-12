@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class AppDetailActivity extends BladeActivity {
@@ -79,7 +78,7 @@ public class AppDetailActivity extends BladeActivity {
 			// install new blades: start InstallBladeActivity
 			Intent appDetailIntent = new Intent(AppDetailActivity.this, InstallBladeActivity.class);
 			appDetailIntent.putExtra("packageName", appPackageName);
-			startActivity(appDetailIntent);
+			startActivityForResult(appDetailIntent, 1);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

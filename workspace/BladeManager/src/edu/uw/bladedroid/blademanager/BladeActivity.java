@@ -14,6 +14,8 @@ public abstract class BladeActivity extends Activity {
 
 	protected List<BladeRef> bladesCaptions;
 	protected ArrayAdapter<BladeRef> adapter;
+	
+	protected ListView listView;
 
 	protected void deleteBlade(int id) {
 		BladeRef blade = bladesCaptions.get(id);
@@ -41,13 +43,9 @@ public abstract class BladeActivity extends Activity {
 		setTitle(getTitle(intent));
 
 		// set up list view with installed Blades for application
-		final ListView listView = (ListView) findViewById(R.id.bladeList);
+		listView = (ListView) findViewById(R.id.bladeList);
 
-		bladesCaptions = getBlades(intent);
-
-		adapter = new ArrayAdapter<BladeRef>(this,
-				android.R.layout.simple_selectable_list_item, bladesCaptions);
-		listView.setAdapter(adapter);
+		buildListView(intent);
 
 		// set up menu
 		registerForContextMenu(listView);
@@ -56,6 +54,22 @@ public abstract class BladeActivity extends Activity {
 		setupActionBar();
 	}
 
+	protected void buildListView(Intent intent) {
+		bladesCaptions = getBlades(intent);
+
+		adapter = new ArrayAdapter<BladeRef>(this,
+				android.R.layout.simple_selectable_list_item, bladesCaptions);
+		listView.setAdapter(adapter);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// reload data
+		buildListView(getIntent());
+	}
+	
 	abstract List<BladeRef> getBlades(Intent intent);
 	
 	protected String getTitle(Intent intent) {
