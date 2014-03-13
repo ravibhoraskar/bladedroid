@@ -4,7 +4,7 @@
 
 echo "compiling $1.jar"
 cd bin/classes/
-jar cf $1.jar edu/uw/bladedroid/blade/$1.class
+jar cf $1.jar edu/uw/bladedroid/blade/$1*.class
 echo "convert to dex"
 dx --dex --output $1Dex.jar $1.jar
 echo "pushing to sdcard/blades/$2/"
