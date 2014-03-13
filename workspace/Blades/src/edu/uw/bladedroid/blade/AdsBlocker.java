@@ -1,6 +1,5 @@
 package edu.uw.bladedroid.blade;
 
-
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -10,51 +9,43 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 public class AdsBlocker extends AbstractBlade {
-	
+
 	private static HashSet<String> adViews = new HashSet<String>(Arrays.asList(
-			"com.google.ads.AdView",
-			"com.google.android.gms.ads.AdView",
-			"com.mopub.mobileads.MoPubView"
-			));
-	
+			"com.google.ads.AdView", "com.google.android.gms.ads.AdView",
+			"com.mopub.mobileads.MoPubView"));
+
 	public void onCreate(Activity activity, Bundle savedInstanceState) {
 		Log.wtf("ADSBLOCKER", "onCreate");
 		View rootView = activity.findViewById(android.R.id.content);
-		removeAllAdView(rootView);
+		hideAllAdViews(rootView);
 	}
-	
-	private void removeAllAdView(View inputView){
-		ViewGroup viewgroup=(ViewGroup)inputView;
+
+	private void hideAllAdViews(View inputView) {
+		ViewGroup viewgroup = (ViewGroup) inputView;
 		int childCount = viewgroup.getChildCount();
-		for(int i = 0; i < childCount; i++){
+		for (int i = 0; i < childCount; i++) {
 			View v = viewgroup.getChildAt(i);
-			try{
-				String viewname=v.getClass().getName();
-				if(adViews.contains(viewname))
-				{
-					((ViewGroup)v.getParent()).removeView(v);
-					Log.wtf("ADSBLOCKER", "FOUND ADVIEW "+viewname);
-					childCount--;i--;
+			try {
+				String viewname = v.getClass().getName();
+				if (adViews.contains(viewname)) {
+					v.setVisibility(View.GONE);
+
+					Log.wtf("ADSBLOCKER", "FOUND ADVIEW " + viewname);
+					childCount--;
+					i--;
 					continue;
+				} else {
+					Log.wtf("ADSBLOCKER", viewname + " IS NOT AN ADVIEW");
 				}
-				else
-				{
-					Log.wtf("ADSBLOCKER", viewname +" IS NOT AN ADVIEW");
-				}
-			}catch (NoClassDefFoundError e){
-			}catch (NullPointerException e){
+			} catch (NoClassDefFoundError e) {
+			} catch (NullPointerException e) {
 				Log.wtf("ADSBLOCKER", e);
 			}
-			
 
-			if(v instanceof ViewGroup){
-//				Log.wtf("ADSBLOCKER", "instance of viewgroup");
-				removeAllAdView(v);
+			if (v instanceof ViewGroup) {
+				hideAllAdViews(v);
 			}
-			
 		}
-		
 	}
 }
