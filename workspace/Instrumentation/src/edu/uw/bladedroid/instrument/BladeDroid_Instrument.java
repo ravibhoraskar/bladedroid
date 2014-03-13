@@ -1,80 +1,140 @@
 package edu.uw.bladedroid.instrument;
 
 import soot.Body;
+import soot.BooleanType;
 import soot.Local;
-import soot.Scene;
+import soot.Modifier;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
+import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
+import soot.jimple.NopStmt;
 import soot.util.Chain;
 import soot.util.HashChain;
 
 public class BladeDroid_Instrument
 {
-    private final static String bladedroid__class = "edu.uw.bladedroid.BladeDroid";
-    private final static String bladedroid_onCreate__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onCreate(android.app.Activity,android.os.Bundle)>";
-    private final static String bladedroid_onStart__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onStart(android.app.Activity)>";
-    private final static String bladedroid_onResume__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onResume(android.app.Activity)>";
-    private final static String bladedroid_onPause__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onPause(android.app.Activity)>";
-    private final static String bladedroid_onStop__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onStop(android.app.Activity)>";
-    private final static String bladedroid_onDestroy__signature =
-            "<edu.uw.bladedroid.BladeDroid: void onDestroy(android.app.Activity)>";
 
     public static void run()
     {
-        Chain<SootClass> appClassChain = Scene.v().getApplicationClasses();
-        SootMethod bladedroid_onCreate = Util.getMethod(bladedroid_onCreate__signature, bladedroid__class);
-        SootMethod bladedroid_onStart = Util.getMethod(bladedroid_onStart__signature, bladedroid__class);
-        SootMethod bladedroid_onResume = Util.getMethod(bladedroid_onResume__signature, bladedroid__class);
-        SootMethod bladedroid_onPause = Util.getMethod(bladedroid_onPause__signature, bladedroid__class);
-        SootMethod bladedroid_onStop = Util.getMethod(bladedroid_onStop__signature, bladedroid__class);
-        SootMethod bladedroid_onDestroy = Util.getMethod(bladedroid_onDestroy__signature, bladedroid__class);
-        for (SootClass activity : Util.getActivities(appClassChain))
+        SootMethod bladedroid_onCreate = Util.getMethod(Info.bladedroid_onCreate__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onStart = Util.getMethod(Info.bladedroid_onStart__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onResume = Util.getMethod(Info.bladedroid_onResume__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onPause = Util.getMethod(Info.bladedroid_onPause__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onStop = Util.getMethod(Info.bladedroid_onStop__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onDestroy = Util.getMethod(Info.bladedroid_onDestroy__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyLongPress = Util.getMethod(Info.bladedroid_onKeyLongPress__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyDown = Util.getMethod(Info.bladedroid_onKeyDown__signature, Info.bladedroid__class);
+        SootMethod bladedroid_onKeyUp = Util.getMethod(Info.bladedroid_onKeyUp__signature, Info.bladedroid__class);
+        for (SootClass activity : Util.getActivities())
         {
-            instrumentCallAtEnd(activity, Util.onCreateName, bladedroid_onCreate);
-            instrumentCallAtEnd(activity, Util.onStartName, bladedroid_onStart);
-            instrumentCallAtEnd(activity, Util.onResumeName, bladedroid_onResume);
-            instrumentCallAtEnd(activity, Util.onPauseName, bladedroid_onPause);
-            instrumentCallAtEnd(activity, Util.onStopName, bladedroid_onStop);
-            instrumentCallAtEnd(activity, Util.onDestroyName, bladedroid_onDestroy);
+            createMethodsIfDontExist(activity);
 
-            SootMethod constructor;
-            try
-            {
-                constructor = activity.getMethodByName(Util.onCreateName);
-            } catch (RuntimeException e)
-            {
-                // If onCreate not found
-                constructor = null;
-            }
-            if (constructor == null)
-            {
-                continue;
-            }
-            Body body = constructor.retrieveActiveBody();
-            Chain<Unit> toInsert = new HashChain<Unit>();
-            Local thislocal = Util.findthislocal(body.getUnits());
+            instrumentCallAtEnd(activity, Info.onCreateSubSignature, bladedroid_onCreate);
+            instrumentCallAtEnd(activity, Info.onStartSubSignature, bladedroid_onStart);
+            instrumentCallAtEnd(activity, Info.onResumeSubSignature, bladedroid_onResume);
+            instrumentCallAtEnd(activity, Info.onPauseSubSignature, bladedroid_onPause);
+            instrumentCallAtEnd(activity, Info.onStopSubSignature, bladedroid_onStop);
+            instrumentCallAtEnd(activity, Info.onDestroySubSignature, bladedroid_onDestroy);
+            instrumentOnKey(activity, Info.onKeyLongPressSubSignature, bladedroid_onKeyLongPress);
+            instrumentOnKey(activity, Info.onKeyDownSubSignature, bladedroid_onKeyDown);
+            instrumentOnKey(activity, Info.onKeyUpSubSignature, bladedroid_onKeyUp);
         }
     }
 
-    private static void instrumentCallAtEnd(SootClass activity, String methodName, SootMethod toCall)
+    private static void createMethodsIfDontExist(SootClass activity) {
+        if (!activity.declaresMethod(Info.onCreateSubSignature))
+        {
+            System.out.println("subsig: " + Info.onCreateSubSignature);
+            Util.addMethodToClass(activity, Info.onCreateSubSignature, Info.onCreateParams(), Info.onCreateReturn);
+        }
+        if (!activity.declaresMethod(Info.onStartSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onStartSubSignature, Info.onStartParams(), Info.onStartReturn);
+        }
+        if (!activity.declaresMethod(Info.onResumeSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onResumeSubSignature, Info.onResumeParams(), Info.onResumeReturn);
+        }
+        if (!activity.declaresMethod(Info.onPauseSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onPauseSubSignature, Info.onPauseParams(), Info.onPauseReturn);
+        }
+        if (!activity.declaresMethod(Info.onStopSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onStopSubSignature, Info.onStopParams(), Info.onStopReturn);
+        }
+        if (!activity.declaresMethod(Info.onDestroySubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onDestroySubSignature, Info.onDestroyParams(), Info.onDestroyReturn);
+        }
+        if (!activity.declaresMethod(Info.onKeyLongPressSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onKeyLongPressSubSignature, Info.onKeyLongPressParams(), Info.onKeyLongPressReturn);
+        }
+        if (!activity.declaresMethod(Info.onKeyDownSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onKeyDownSubSignature, Info.onKeyDownParams(), Info.onKeyDownReturn);
+        }
+        if (!activity.declaresMethod(Info.onKeyUpSubSignature))
+        {
+            Util.addMethodToClass(activity, Info.onKeyUpSubSignature, Info.onKeyUpParams(), Info.onKeyUpReturn);
+        }
+
+        for (SootMethod m : activity.getMethods())
+        {
+            System.out.println("Method: " + m);
+        }
+
+    }
+
+    private static void instrumentOnKey(SootClass activity, String methodSubSignature, SootMethod toCall)
     {
         SootMethod method;
         try
         {
-            method = activity.getMethodByName(methodName);
+            method = activity.getMethod(methodSubSignature);
+        } catch (RuntimeException e)
+        {
+            throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
+        }
+        method.setModifiers(method.getModifiers() & (~Modifier.FINAL));
+        Body body = method.retrieveActiveBody();
+        Chain<Unit> toInsert = new HashChain<Unit>();
+        Local thislocal = Util.findthislocal(body.getUnits());
+        Local firstparam = Util.findparamlocal(body.getUnits());
+        Local secondparam = Util.findsecondparamlocal(body.getUnits());
+
+        Local returnvalue = Jimple.v().newLocal("returnvalue", BooleanType.v());
+        body.getLocals().add(returnvalue);
+        toInsert.add(Jimple.v().
+                newAssignStmt(returnvalue, Jimple.v().
+                        newStaticInvokeExpr(toCall.makeRef(), thislocal, firstparam, secondparam)));
+
+        NopStmt jumpTarget = Jimple.v().newNopStmt();
+        toInsert.add(Jimple.v().
+                newIfStmt(Jimple.v().
+                        newEqExpr(
+                                returnvalue,
+                                IntConstant.v(0)), jumpTarget));
+        toInsert.add(Jimple.v().newReturnStmt(returnvalue));
+        toInsert.add(jumpTarget);
+        Util.insertAfterIdentityStmt(body.getUnits(), toInsert);
+    }
+
+    private static void instrumentCallAtEnd(SootClass activity, String methodSubSignature, SootMethod toCall)
+    {
+        SootMethod method;
+        try
+        {
+            method = activity.getMethod(methodSubSignature);
 
         } catch (RuntimeException e)
         {
-            // TODO: Create method if not exist
-            return;
+            throw new RuntimeException("Method not found: " + methodSubSignature + " in class: " + activity.getJavaStyleName() + "\n" + e.getMessage());
         }
+        method.setModifiers(method.getModifiers() & (~Modifier.FINAL));
         Body body = method.retrieveActiveBody();
         Chain<Unit> toInsert = new HashChain<Unit>();
         Local thislocal = Util.findthislocal(body.getUnits());

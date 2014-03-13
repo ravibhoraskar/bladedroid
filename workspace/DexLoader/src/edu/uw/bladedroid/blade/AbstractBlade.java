@@ -6,9 +6,10 @@ import java.util.regex.Pattern;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import edu.uw.bladedroid.BladeDroid;
 
-public abstract class AbstractBlade implements IBlade {
+public abstract class AbstractBlade {
 
     protected Matcher scopeMatcher;
 
@@ -24,28 +25,113 @@ public abstract class AbstractBlade implements IBlade {
         return scopeMatcher.reset(activity).matches();
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @param savedInstanceState
+     * @see Activity#onCreate
+     */
     public void onCreate(Activity activity, Bundle savedInstanceState) {
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @see Activity#onStart
+     */
     public void onStart(Activity activity) {
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @see Activity#onResume
+     */
     public void onResume(Activity activity) {
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @see Activity#onPause
+     */
     public void onPause(Activity activity) {
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @see Activity#onStrop
+     */
     public void onStop(Activity activity) {
     }
 
-    @Override
+    /**
+     * 
+     * @param activity
+     * @see Activity#onDestroy
+     */
     public void onDestroy(Activity activity) {
+    }
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyDown
+     */
+    public boolean onKeyDown(Activity activity, int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyLongPress
+     */
+    public boolean onKeyLongPress(Activity activity, int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyMultiple
+     */
+    public boolean onKeyMultiple(Activity activity, int keyCode, int repeatCount, KeyEvent event) {
+        return false;
+    }
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyShortcut
+     */
+    public boolean onKeyShortcut(Activity activity, KeyEvent event) {
+        return false;
+    }
+
+    /**
+     * 
+     * @param activity
+     * @param keyCode
+     * @param event
+     * @return
+     * @see Activity#onKeyUp
+     */
+    public boolean onKeyUp(Activity activity, int keyCode, KeyEvent event) {
+        return false;
     }
 
 }
