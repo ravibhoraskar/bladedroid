@@ -29,7 +29,8 @@ public class AdsBlocker extends AbstractBlade {
 			try {
 				String viewname = v.getClass().getName();
 				if (adViews.contains(viewname)) {
-					v.setVisibility(View.GONE);
+//					v.setVisibility(View.INVISIBLE);
+					((ViewGroup) v.getParent()).removeView(v);
 
 					Log.wtf("ADSBLOCKER", "FOUND ADVIEW " + viewname);
 					childCount--;
