@@ -24,7 +24,6 @@ public class InstallBladeActivity extends BladeActivity {
 		appPackageName = getIntent().getCharSequenceExtra("packageName").toString();
 		super.onCreate(savedInstanceState);
 		
-		final ListView listView = (ListView) findViewById(R.id.bladeList);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View view,
 	                int position, long id) {
@@ -54,7 +53,7 @@ public class InstallBladeActivity extends BladeActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.install_blade, menu);
+//		getMenuInflater().inflate(R.menu.install_blade, menu);
 		return true;
 	}
 
