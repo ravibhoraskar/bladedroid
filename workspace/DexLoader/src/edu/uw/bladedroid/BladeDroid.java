@@ -16,7 +16,11 @@ public final class BladeDroid {
     private final BladeLoader loader;
 
     private BladeDroid(Activity initiator) {
+        long start = System.nanoTime();
         loader = new BladeLoader(initiator);
+        int bladeCount = loader.getBlades().size();
+        long time = System.nanoTime() - start;
+        Log.i("BLADE-LOADING", bladeCount + "-" + time);
     }
 
     public static synchronized BladeDroid getInstance(Activity initiator) {
@@ -141,6 +145,7 @@ public final class BladeDroid {
                 Log.i(TAG, "omitting execution of blade " + String.valueOf(b));
             }
         }
+        Log.i(TAG, "Blade execution returning " + ret);
         return ret;
     }
 
