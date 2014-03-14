@@ -53,10 +53,10 @@ cp -r "$OUT"/smali/* "$OUT"/"$NAME"/smali/
 apktool b "$OUT"/$NAME "$OUT"/"$NAME".apk
 
 # Sign APK
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEY -storepass $PW "$OUT"/"$NAME".apk $ALIAS
+jarsigner -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEY -storepass $PW "$OUT"/"$NAME".apk $ALIAS
 
 # Align APK
-zipalign -v -f 4 "$OUT"/$NAME.apk $NAME-aligned.apk
+zipalign -f 4 "$OUT"/$NAME.apk $NAME-aligned.apk
 
 echo "Cleaning Up"
 #rm -rf "$OUT"
