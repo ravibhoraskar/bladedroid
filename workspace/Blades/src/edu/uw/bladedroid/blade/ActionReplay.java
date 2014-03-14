@@ -26,11 +26,10 @@ import android.widget.Toast;
 public class ActionReplay extends AbstractBlade{
     
     private final String LOG_TAG = "ACTION_REPLAY";
-//    private final Mode MODE = Mode.RECORD;
-    private final Mode MODE = Mode.REPLAY;
+    private final Mode MODE = Mode.RECORD;
+//    private final Mode MODE = Mode.REPLAY;
     
     private TouchingEventSaver saver;
-    
  
     public void onCreate(Activity activity, Bundle savedInstanceState) {
         Log.wtf(LOG_TAG, "in " + MODE + " mode");
@@ -38,6 +37,9 @@ public class ActionReplay extends AbstractBlade{
         if(MODE == Mode.RECORD){
             Toast.makeText(activity, "RECORDING NOW...", Toast.LENGTH_SHORT).show();
             monitorAllButtonsApproache(activity);
+        }else if (MODE == Mode.REPLAY){
+            Toast.makeText(activity, "REPLAY ACTIONS", Toast.LENGTH_SHORT).show();
+            new ButtonClickAsync().execute(activity);
         }
     }
     
@@ -82,12 +84,12 @@ public class ActionReplay extends AbstractBlade{
         }
     }
     
-    public void onResume(Activity activity){
-        if(MODE == Mode.REPLAY){
-            Toast.makeText(activity, "REPLAY ACTIONS", Toast.LENGTH_SHORT).show();
-            new ButtonClickAsync().execute(activity);
-        }
-    }
+//    public void onResume(Activity activity){
+//        if(MODE == Mode.REPLAY){
+//            Toast.makeText(activity, "REPLAY ACTIONS", Toast.LENGTH_SHORT).show();
+//            new ButtonClickAsync().execute(activity);
+//        }
+//    }
     
     private class ButtonClickAsync extends AsyncTask<Activity, Void, Void>{
 

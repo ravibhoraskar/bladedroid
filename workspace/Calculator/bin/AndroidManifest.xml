@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dalviksoft.calculator"
+    android:versionCode="2"
+    android:versionName="2.0" >
+
+    <uses-sdk android:minSdkVersion="8" />
+
+    <!-- Mandatory permission -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Optional, but without them, you might get less ads and tracking could be less accurate -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application
+        android:icon="@drawable/calculator"
+        android:label="@string/app_name" >
+        <activity
+            android:name="com.dalviksoft.calculator.Main"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Add this activity with this theme -->
+        <activity
+            android:name="com.purplebrain.adbuddiz.sdk.AdBuddizActivity"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <!-- Replace TEST_PUBLISHER_KEY with your unique AdBuddiz publisher key -->
+        <meta-data
+            android:name="ADBUDDIZ_PUBLISHER_KEY"
+            android:value="4f280444-4eec-4279-9dd5-438c9346ed18" />
+    </application>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+</manifest>
