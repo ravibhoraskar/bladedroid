@@ -99,6 +99,7 @@ public abstract class AbstractBlade {
     }
 
     /**
+     * NOT INSTRUMENTED
      * 
      * @param activity
      * @param keyCode
@@ -111,6 +112,7 @@ public abstract class AbstractBlade {
     }
 
     /**
+     * NOT INSTRUMENTED
      * 
      * @param activity
      * @param keyCode
@@ -123,7 +125,6 @@ public abstract class AbstractBlade {
     }
 
     /**
-     * 
      * @param activity
      * @param keyCode
      * @param event
