@@ -1,15 +1,10 @@
 package com.socialify;
 
-import javax.security.auth.Destroyable;
-
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
-
 import android.app.Activity;
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
