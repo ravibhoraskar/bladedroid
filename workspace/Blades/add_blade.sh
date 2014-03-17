@@ -9,7 +9,7 @@ echo "convert to dex"
 dx --dex --output $1Dex.jar $1.jar
 echo "pushing to sdcard/blades/$2/"
 adb push $1Dex.jar /sdcard/blades/$2/$1Dex.jar
-adb push $1Dex.jar /sdcard/blades/all/$1Dex.jar
+adb push $1Dex.jar /sdcard/blades/all/$1.jar
 mv $1Dex.jar ../../
 echo "clean jar files"
 rm $1.jar
